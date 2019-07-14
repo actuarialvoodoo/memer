@@ -38,3 +38,48 @@ meme_get <- function(memename) {
 meme_list <- function() {
   return(memer::blankmemes$name)
 }
+
+meme_search <- function(qry) {
+    url <- glue::glue(
+        "https://knowyourmeme.com/search?q={enc_qry}",
+        enc_qry = URLencode(qry)
+    )
+    doc <- xml2::read_html(url)
+    entry_box <- rvest::html_nodes(doc, "#entries")
+    img_nodes <- rvest::html_nodes(entry_box, "img")
+    
+    meme <- rvest::html_attr(img_nodes, "title")
+    url <- rvest::html_attr(img_nodes, "data-src")
+    
+    entry_idx <- stringr::str_detect(url, "entries")
+    
+    tibble::tibble(
+      meme = meme[entry_idx], 
+      url = url[entry_idx]
+      )
+}
+
+meme_get_kym <- function(memename) {
+  
+  meme_url <- get_meme_url(memename)
+  
+  image_read(meme_url)
+}
+
+get_meme_url <- function(memename) {
+  url <- glue::glue(
+    "https://knowyourmeme.com/memes/{memename}",
+    memename = clean_memename(memename)
+  )
+  
+  hn <- rvest::html_node(xml2::read_html(url), css = ".wide")
+  rvest::html_attr(hn, "href")
+}
+
+clean_memename <- function(memename){
+  stringr::str_replace_all(
+    stringr::str_to_lower(memename), 
+    pattern = " ",
+    replacement = "-"
+  )
+}
