@@ -71,7 +71,10 @@ get_meme_url <- function(memename) {
     "https://knowyourmeme.com/memes/{memename}",
     memename = clean_memename(memename)
   )
-  
+  if (!is_meme(url)) {
+    msg <- glue::glue("'{memename}' is not a known meme on 'knowyourmeme.com'.")
+    stop(msg, call. = FALSE)
+  } 
   hn <- rvest::html_node(xml2::read_html(url), css = ".wide")
   rvest::html_attr(hn, "href")
 }
@@ -82,4 +85,10 @@ clean_memename <- function(memename){
     pattern = " ",
     replacement = "-"
   )
+}
+
+is_meme <- function(meme_url) {
+  res <- httr::GET(meme_url)
+  
+  res$status_code == 200
 }
