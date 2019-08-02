@@ -42,7 +42,7 @@ meme_list <- function() {
 meme_search <- function(qry) {
     url <- glue::glue(
         "https://knowyourmeme.com/search?q={enc_qry}",
-        enc_qry = URLencode(qry)
+        enc_qry = utils::URLencode(qry)
     )
     doc <- xml2::read_html(url)
     entry_box <- rvest::html_nodes(doc, "#entries")
@@ -87,7 +87,7 @@ clean_memename <- function(memename){
   )
 }
 
-is_meme <- function(meme_url) {
+is_meme <- function(memename) {
   res <- httr::GET(meme_url)
   
   res$status_code == 200

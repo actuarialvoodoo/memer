@@ -10,9 +10,10 @@ Description: A tidyverse-friendly package for generating memes in R. The functio
 Depends: R (>= 3.4.0)
 Imports:
     magrittr,
-    magick, 
+    magick,
     readr,
-    stringr
+    stringr,
+    glue
 Suggests:
     rtweet,
     dplyr (>= 0.8.0), 
